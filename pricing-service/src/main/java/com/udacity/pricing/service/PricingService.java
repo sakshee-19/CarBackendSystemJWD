@@ -1,26 +1,31 @@
 package com.udacity.pricing.service;
 
 import com.udacity.pricing.domain.price.Price;
+import com.udacity.pricing.domain.price.PriceRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 /**
  * Implements the pricing service to get prices for each vehicle.
  */
+@Service
 public class PricingService {
 
-    /**
-     * Holds {ID: Price} pairings (current implementation allows for 20 vehicles)
-     */
-    private static final Map<Long, Price> PRICES = LongStream
-            .range(1, 20)
-            .mapToObj(i -> new Price("USD", randomPrice(), i))
-            .collect(Collectors.toMap(Price::getVehicleId, p -> p));
+    private static Logger logger = LoggerFactory.getLogger(PricingService.class);
+	
+	@Autowired
+	private  PriceRepository priceRepository;
 
     /**
      * If a valid vehicle ID, gets the price of the vehicle from the stored array.
@@ -28,13 +33,16 @@ public class PricingService {
      * @return price of the requested vehicle
      * @throws PriceException vehicleID was not found
      */
-    public static Price getPrice(Long vehicleId) throws PriceException {
+    public  Price getPrice(Long vehicleId) throws PriceException {
 
-        if (!PRICES.containsKey(vehicleId)) {
-            throw new PriceException("Cannot find price for Vehicle " + vehicleId);
+        logger.info("**START** getPrice vehicleId={}", vehicleId);
+        Optional<Price> price = priceRepository.findById(vehicleId);
+        if(price.isPresent()){
+            return price.get();
+        } else {
+            logger.info( " NO SUCH ELEMENT={}", vehicleId);
+            throw new PriceException("Price not FOUND for vehicle-id="+vehicleId);
         }
-
-        return PRICES.get(vehicleId);
     }
 
     /**
