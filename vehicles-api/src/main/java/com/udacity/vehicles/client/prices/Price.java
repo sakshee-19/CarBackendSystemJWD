@@ -14,6 +14,15 @@ public class Price {
     public Price() {
     }
 
+    @Override
+    public String toString() {
+        return "Price{" +
+                "currency='" + currency + '\'' +
+                ", price=" + price +
+                ", vehicleId=" + vehicleId +
+                '}';
+    }
+
     public String getCurrency() {
         return currency;
     }

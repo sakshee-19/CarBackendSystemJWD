@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/cars")
 class CarController {
+    private static Logger logger = LoggerFactory.getLogger(CarController.class);
 
     private final CarService carService;
     private final CarResourceAssembler assembler;
@@ -45,8 +48,10 @@ class CarController {
      */
     @GetMapping
     Resources<Resource<Car>> list() {
+        logger.info("**START** list");
         List<Resource<Car>> resources = carService.list().stream().map(assembler::toResource)
                 .collect(Collectors.toList());
+        logger.info("**END** list {}", resources.isEmpty());
         return new Resources<>(resources,
                 linkTo(methodOn(CarController.class).list()).withSelfRel());
     }
@@ -63,7 +68,10 @@ class CarController {
          * TODO: Use the `assembler` on that car and return the resulting output.
          *   Update the first line as part of the above implementing.
          */
+
+        logger.info("**START** get id={}", id);
         Car car = carService.findById(id);
+        logger.info("**END** get car={}", car);
         return assembler.toResource(car);
     }
 
@@ -80,8 +88,10 @@ class CarController {
          * TODO: Use the `assembler` on that saved car and return as part of the response.
          *   Update the first line as part of the above implementing.
          */
+        logger.info("**START** post car={}", car);
         Car carSaved = carService.save(car);
         Resource<Car> resource = assembler.toResource(carSaved);
+        logger.info("**END** post resource={}", resource);
         return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
     }
 
@@ -99,9 +109,11 @@ class CarController {
          * TODO: Use the `assembler` on that updated car and return as part of the response.
          *   Update the first line as part of the above implementing.
          */
+        logger.info("**START** put car={} id={}", car, id);
         car.setId(id);
         Car carSaved = carService.save(car);
         Resource<Car> resource = assembler.toResource(carSaved);
+        logger.info("**END** put resource={} ", resource);
         return ResponseEntity.ok(resource);
     }
 
@@ -115,7 +127,9 @@ class CarController {
         /**
          * TODO: Use the Car Service to delete the requested vehicle.
          */
+        logger.info("**START** delete id={}", id);
         carService.delete(id);
+        logger.info("**END** delete");
         return ResponseEntity.noContent().build();
     }
 }
