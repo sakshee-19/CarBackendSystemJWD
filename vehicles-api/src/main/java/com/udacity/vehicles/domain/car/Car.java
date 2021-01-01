@@ -49,6 +49,19 @@ public class Car {
     @Transient
     private String price;
 
+    @Override
+    public String toString() {
+        return "Car{" +
+                "id=" + id +
+                ", createdAt=" + createdAt +
+                ", modifiedAt=" + modifiedAt +
+                ", condition=" + condition +
+                ", details=" + details +
+                ", location=" + location +
+                ", price='" + price + '\'' +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }

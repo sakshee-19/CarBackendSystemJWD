@@ -23,6 +23,22 @@ public class Details {
     @ManyToOne
     private Manufacturer manufacturer;
 
+    @Override
+    public String toString() {
+        return "Details{" +
+                "body='" + body + '\'' +
+                ", model='" + model + '\'' +
+                ", manufacturer=" + manufacturer +
+                ", numberOfDoors=" + numberOfDoors +
+                ", fuelType='" + fuelType + '\'' +
+                ", engine='" + engine + '\'' +
+                ", mileage=" + mileage +
+                ", modelYear=" + modelYear +
+                ", productionYear=" + productionYear +
+                ", externalColor='" + externalColor + '\'' +
+                '}';
+    }
+
     private Integer numberOfDoors;
 
     private String fuelType;
